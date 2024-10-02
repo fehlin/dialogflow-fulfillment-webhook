@@ -32,6 +32,6 @@ To capture and retrieve conversation transcripts between the customer and the Di
 
 #### Steps:
 
-1. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables**:
+1. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables - Outpus**:
 - **Key Name 1**: `transcripts`
 - **Variable to Assign 1**: `<any variable to retrieve transcript context value>`

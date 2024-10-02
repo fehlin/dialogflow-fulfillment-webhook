@@ -2,8 +2,6 @@
 
 This guide explains how to configure the webhook for a Dialogflow ES agent and integrate it with Genesys Cloud Architect Flow to manage session variables, including capturing conversation transcripts as participant data.
 
-## Prerequisites
-
 ### 1. Configure the Webhook for Dialogflow ES Agent
 
 Now that the webhook exists as a service, you need to associate this webhook with your Dialogflow agent. This is done via the **Fulfillment** settings.
@@ -37,5 +35,3 @@ To capture and retrieve conversation transcripts between the customer and the Di
 1. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables**:
 - **Key Name 1**: `transcripts`
 - **Variable to Assign 1**: `<any variable to retrieve transcript context value>`
-
-This setup ensures that the conversation history between the customer and the bot can be logged and tracked efficiently.

@@ -1,6 +1,6 @@
 # Dialogflow Fulfillment Webhook Setup
 
-This guide explains how to configure the webhook for a Dialogflow ES agent and integrate it with Genesys Cloud Architect Flow to manage session variables, including capturing conversation transcripts as participant data.
+This guide explains how to configure the webhook for a Dialogflow ES agent and integrate it with Genesys Cloud Architect Flow to manage session variables.
 
 ### 1. Configure the Webhook for Dialogflow ES Agent
 
@@ -17,7 +17,7 @@ Now that the webhook exists as a service, you need to associate this webhook wit
 
 #### Enable Fulfillment for Intents:
 
-Once fulfillment is enabled for the agent, you need to enable it for each intent except for the greeting intent.
+Once fulfillment is enabled for the agent, you need to enable it for each intent.
 
 1. In the left sidebar menu, select **Intents**.
 2. For each intent (except for greeting):
@@ -28,10 +28,14 @@ Once fulfillment is enabled for the agent, you need to enable it for each intent
 
 ### 2. Configure Genesys Cloud Architect Flow
 
-To capture and retrieve conversation transcripts between the customer and the Dialogflow bot, configure the Genesys Cloud Architect Flow with session variables.
+To capture conversation transcripts and trace slot filling attempts, configure the Genesys Cloud Architect Flow with session variables.
 
 #### Steps:
 
-1. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables - Outpus**:
+1. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables - Inputs**:
+- **Key Name 1**: `MaximumSlotAttempts`
+- **Variable to Assign 1**: `<any variable used to store MaximumSlotAttempts threshold>`
+
+2. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables - Outputs**:
 - **Key Name 1**: `transcripts`
 - **Variable to Assign 1**: `<any variable to retrieve transcript context value>`

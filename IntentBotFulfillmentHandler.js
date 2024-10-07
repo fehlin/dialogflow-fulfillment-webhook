@@ -1,28 +1,43 @@
 export async function handler(event) {
+    // Helper function to retrieve contexts
+    function getContext(outputContexts, contextName) {
+        return outputContexts.find(ctx => ctx.name.endsWith(`/contexts/${contextName}`));
+    }
+    
     try {
-        const body = JSON.parse(event.body); // Parse Dialogflow request
-
+        const body = JSON.parse(event.body);
         const queryResult = body.queryResult;
+        const detectedIntent = queryResult.intent.displayName;
         const userInput = queryResult.queryText;
         const botResponse = queryResult.fulfillmentText;
         const confidence = queryResult.intentDetectionConfidence;
-        const sentiment = queryResult.sentimentAnalysisResult
-            ? queryResult.sentimentAnalysisResult.queryTextSentiment.score
-            : "N/A";
-            
-        // Check if the conversation is ending
-        const endConversation = queryResult.intent && queryResult.intent.endInteraction;
+        const sentiment = queryResult.sentimentAnalysisResult?.queryTextSentiment?.score || "N/A";
+        const endConversation = queryResult.intent?.endInteraction;
+
+        // Retrieve MaximumSlotAttempts from Genesys Input context
+        const genesysGreetingContext = getContext(queryResult.outputContexts, 'genesys_greeting');
+        const MaximumSlotAttemptsInput = genesysGreetingContext?.parameters?.MaximumSlotAttempts || "2";
+
+        // Retrieve current MaximumSlotAttempts from context
+        const genesysOutputContext = getContext(queryResult.outputContexts, 'genesys-output');
+        let MaximumSlotAttempts = parseInt(genesysOutputContext?.parameters?.MaximumSlotAttempts) || 0;
+        let slotAttemptsCount = parseInt(genesysOutputContext?.parameters?.slotAttemptsCount) || 0;
+        const previousIntent = genesysOutputContext?.parameters?.previousIntent || "";
+        const previousBotResponse = genesysOutputContext?.parameters?.previousBotResponse || "";
         
-        // Retrieve current transcript context
-        let conversationHistory = "";
-        if (queryResult.outputContexts && queryResult.outputContexts.length > 0) {
-            const context = queryResult.outputContexts.find(ctx => ctx.name.endsWith('/contexts/genesys-output'));
-            if (context && context.parameters && context.parameters.transcripts) {
-                conversationHistory = context.parameters.transcripts; // Get existing transcripts
+        // Check slot attempts
+        let isMaximumSlotAttempt = false;
+        if (queryResult.parameters && !queryResult.allRequiredParamsPresent) {
+            if (detectedIntent === previousIntent && botResponse === previousBotResponse) {
+                slotAttemptsCount++;
+                if (slotAttemptsCount >= MaximumSlotAttempts) {
+                    isMaximumSlotAttempt = true;
+                }
             }
         }
 
-        // Add new dialogue segment
+        // Conversation transcript
+        let conversationHistory = genesysOutputContext?.parameters?.transcripts || "";
         const newSegment = `${userInput}(${confidence})(${sentiment})|${botResponse}|`;
         conversationHistory += newSegment;
         if (endConversation) {
@@ -30,30 +45,36 @@ export async function handler(event) {
         }
 
         // Build response with updated context
-        const response = {
+        let response = {
             fulfillmentText: botResponse,
             outputContexts: [
                 {
                     name: `${body.session}/contexts/genesys-output`,
-                    lifespanCount: 50, // Lifespan of the context 50 turns
+                    lifespanCount: 50,
                     parameters: {
-                        transcripts: conversationHistory
+                        transcripts: conversationHistory,
+                        previousIntent: detectedIntent,
+                        previousBotResponse: botResponse,
+                        MaximumSlotAttempts: MaximumSlotAttemptsInput || MaximumSlotAttempts,
+                        slotAttemptsCount: slotAttemptsCount
                     }
                 }
             ]
         };
 
-        // Return the fulfilment response
+        if (isMaximumSlotAttempt) {
+            response.followupEventInput = { name: "GENESYS_SLOT_FILLING_CANCELLED" };
+        }
+
         return {
             statusCode: 200,
             body: JSON.stringify(response),
         };
     } catch (error) {
         console.error("Error in Lambda function:", error);
-
         return {
             statusCode: 500,
-            body: JSON.stringify({ message: "Internal Server Error" })
+            body: JSON.stringify({ message: "Internal Server Error" }),
         };
     }
 }

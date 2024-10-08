@@ -32,11 +32,11 @@ export async function handler(event) {
                 slotAttemptsCount++;
                 if (slotAttemptsCount >= MaximumSlotAttempts) {
                     isMaximumSlotAttempt = true;
-                }
-		    } else {
-		        slotAttemptsCount = 0;  // Reset if intent or bot response differs
-		    }
-        }
+				}
+			} else {
+				slotAttemptsCount = 0;  // Reset if intent or bot response differs
+			}
+		}
 
         // Conversation transcript
         let conversationHistory = genesysOutputContext?.parameters?.transcripts || "";

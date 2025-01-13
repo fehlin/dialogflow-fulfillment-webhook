@@ -12,7 +12,7 @@ Now that the webhook exists as a service, you need to associate this webhook wit
 2. Select the intent bot agent you created.
 3. In the left sidebar menu, select **Fulfillment**.
 4. Toggle the **Webhook** field to **Enabled**.
-5. Provide the URL pointing to AWS Lambda API: https://0lj6bguu76.execute-api.ap-southeast-2.amazonaws.com/intentbot   Leave all other fields blank.
+5. Provide the URL pointing to AWS Lambda API: "https://0lj6bguu76.execute-api.ap-southeast-2.amazonaws.com/intentbot" for intent bot agent; "https://0lj6bguu76.execute-api.ap-southeast-2.amazonaws.com/idvbot" for IDV bot agent. Leave all other fields blank.
 6. Click **Save** at the bottom of the page.
 
 #### Enable Fulfillment for Intents:
@@ -39,3 +39,7 @@ To capture conversation transcripts and trace slot filling attempts, configure t
 2. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables - Outputs**:
 - **Key Name 1**: `transcripts`
 - **Variable to Assign 1**: `<any variable to retrieve transcript context value>`
+
+3. Especially for Intent Bot flow, from where the **Call Dialogflow Bot** action is placed, set **Session Variables - Outputs**:
+- **Key Name 1**: `intentJourney`
+- **Variable to Assign 1**: `<any variable to retrieve intentJourney context value>`

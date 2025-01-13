@@ -38,7 +38,7 @@ To capture conversation transcripts and trace slot filling attempts, configure t
 
 2. From where the **Call Dialogflow Bot** action is placed in the flow, set **Session Variables - Outputs**:
 - **Key Name 2**: `transcripts`
-- **Variable to Assign 1**: `<any variable to retrieve transcript context value>`
+- **Variable to Assign 2**: `<any variable to retrieve transcript context value>`
 
 3. Especially for Intent Bot flow, from where the **Call Dialogflow Bot** action is placed, set **Session Variables - Outputs**:
 - **Key Name 1**: `intentJourney`

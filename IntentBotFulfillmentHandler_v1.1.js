@@ -65,7 +65,7 @@ export async function handler(event) {
                         transcripts: conversationHistory,
                         previousIntent: detectedIntent,
                         previousBotResponse: botResponse,
-						intentJourney: intentJourney.toString(),
+			intentJourney: intentJourney.toString(),
                         MaximumSlotAttempts: MaximumSlotAttemptsInput || MaximumSlotAttempts,
                         slotAttemptsCount: slotAttemptsCount
                     }

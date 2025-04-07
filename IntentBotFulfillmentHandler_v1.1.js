@@ -5,7 +5,7 @@ export async function handler(event) {
     }
     
     try {
-        const body = JSON.parse(event.body);
+        const body = typeof event.body === "string" ? JSON.parse(event.body) : event;
         const queryResult = body.queryResult;
         const detectedIntent = queryResult.intent.displayName;
         const userInput = queryResult.queryText;
